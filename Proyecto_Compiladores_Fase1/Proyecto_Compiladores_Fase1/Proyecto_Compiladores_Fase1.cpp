@@ -38,8 +38,103 @@ bool esOperadorRelacional(string str) {
     return false;
 }
 
-int main() {
+class AnalizadorLexico {
+private:
+    string codigo;
+    int posicion;
+public:
+    AnalizadorLexico(string entrada) : codigo(entrada), posicion(0) {}
 
+    Token obtenerSiguienteToken() {
+        while (posicion < codigo.size() && esEspacio(codigo[posicion])) {
+            posicion++; // Ignorar espacios en blanco
+        }
+        if (posicion >= codigo.size()) return { FIN_DE_ARCHIVO, "" };
+
+        char c = codigo[posicion];
+
+        // Identificadores o palabras clave
+        if (esLetra(c)) {
+            string lexema;
+            while (posicion < codigo.size() && (esLetra(codigo[posicion]) || esDigito(codigo[posicion]))) {
+                lexema += codigo[posicion++];
+            }
+            return esPalabraClave(lexema) ? Token{ PALABRA_CLAVE, lexema } : Token{ IDENTIFICADOR, lexema };
+        }
+
+        // Números enteros y flotantes
+        if (esDigito(c)) {
+            string numero;
+            while (posicion < codigo.size() && esDigito(codigo[posicion])) {
+                numero += codigo[posicion++];
+            }
+            if (codigo[posicion] == '.' && esDigito(codigo[posicion + 1])) {
+                numero += codigo[posicion++];
+                while (posicion < codigo.size() && esDigito(codigo[posicion])) {
+                    numero += codigo[posicion++];
+                }
+                return { NUMERO_FLOTANTE, numero };
+            }
+            return { NUMERO_ENTERO, numero };
+        }
+
+        // Cadenas de texto
+        if (c == '"') {
+            string cadena;
+            cadena += codigo[posicion++];
+            while (posicion < codigo.size() && codigo[posicion] != '"') {
+                cadena += codigo[posicion++];
+            }
+            if (posicion < codigo.size()) cadena += codigo[posicion++]; // Agregar comilla de cierre
+            return { CADENA_TEXTO, cadena };
+        }
+
+        // Operadores relacionales
+        string dosCaracteres = codigo.substr(posicion, 2);
+        if (esOperadorRelacional(dosCaracteres)) {
+            posicion += 2;
+            return { OPERADOR_RELACIONAL, dosCaracteres };
+        }
+
+        // Operadores aritméticos
+        if (esOperadorAritmetico(c)) {
+            posicion++;
+            return { OPERADOR_ARITMETICO, string(1, c) };
+        }
+
+        // Símbolos especiales
+        if (esSimboloEspecial(c)) {
+            posicion++;
+            return { SIMBOLO_ESPECIAL, string(1, c) };
+        }
+
+        // Si no coincide con ningún token válido
+        posicion++;
+        return { ERROR, string(1, c) };
+    }
+};
+
+void imprimirToken(Token token) {
+    string nombresTipos[] = {
+        "IDENTIFICADOR", "NUMERO_ENTERO", "NUMERO_FLOTANTE", "CADENA_TEXTO",
+        "OPERADOR_ARITMETICO", "OPERADOR_RELACIONAL", "PALABRA_CLAVE",
+        "SIMBOLO_ESPECIAL", "ERROR", "FIN_DE_ARCHIVO"
+    };
+    cout << "Token: " << nombresTipos[token.tipo] << " -> " << token.valor << endl;
+}
+
+int main() {
+    string codigo_fuente = "8int edad = 25;\nfloat precio = 19.99;\nstring nombre = \"Carlos\";\nif (edad > 18) { write(\"Mayor de edad\"); }";
+
+    AnalizadorLexico analizador(codigo_fuente);
+    Token token;
+
+    do {
+        token = analizador.obtenerSiguienteToken();
+        imprimirToken(token);
+    } while (token.tipo != FIN_DE_ARCHIVO);
+
+    
 
     return 0;
 }
