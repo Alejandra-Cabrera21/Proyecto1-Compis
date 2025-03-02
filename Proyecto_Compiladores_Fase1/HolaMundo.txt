@@ -1,0 +1,3 @@
+string Texto = "Hola Mundo";
+
+Print(Texto);

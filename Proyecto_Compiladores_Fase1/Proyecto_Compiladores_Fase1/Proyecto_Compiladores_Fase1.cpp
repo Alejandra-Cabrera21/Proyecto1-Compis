@@ -1,11 +1,13 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
 enum TokenType {
     IDENTIFICADOR, NUMERO_ENTERO, NUMERO_FLOTANTE, CADENA_TEXTO,
     OPERADOR_ARITMETICO, OPERADOR_RELACIONAL, PALABRA_CLAVE,
-    SIMBOLO_ESPECIAL, ERROR, FIN_DE_ARCHIVO
+    SIMBOLO_ESPECIAL, ERROR, FIN_DE_LINEA, FIN_DE_ARCHIVO
 };
 
 struct Token {
@@ -49,7 +51,7 @@ public:
         while (posicion < codigo.size() && esEspacio(codigo[posicion])) {
             posicion++; // Ignorar espacios en blanco
         }
-        if (posicion >= codigo.size()) return { FIN_DE_ARCHIVO, "" };
+        if (posicion >= codigo.size()) return { FIN_DE_LINEA, "" };
 
         char c = codigo[posicion];
 
@@ -118,23 +120,33 @@ void imprimirToken(Token token) {
     string nombresTipos[] = {
         "IDENTIFICADOR", "NUMERO_ENTERO", "NUMERO_FLOTANTE", "CADENA_TEXTO",
         "OPERADOR_ARITMETICO", "OPERADOR_RELACIONAL", "PALABRA_CLAVE",
-        "SIMBOLO_ESPECIAL", "ERROR", "FIN_DE_ARCHIVO"
-    };
+        "SIMBOLO_ESPECIAL", "ERROR", "FIN_DE_LINEA", "FIN_DE_ARCHIVO"
+    };    
     cout << "Token: " << nombresTipos[token.tipo] << " -> " << token.valor << endl;
 }
 
 int main() {
-    string codigo_fuente = "8int edad = 25;\nfloat precio = 19.99;\nstring nombre = \"Carlos\";\nif (edad > 18) { write(\"Mayor de edad\"); }";
+    ifstream archivo(R"(C:\Users\adria\OneDrive\Documents\GitHub\Proyecto1-Compis\Proyecto_Compiladores_Fase1\HolaMundo.txt)");
+    if (!archivo) {
+        cout << "Error al abrir el archivo" << endl;
+        return 1;
+    }
 
-    AnalizadorLexico analizador(codigo_fuente);
-    Token token;
+    string linea;
+    while (getline(archivo, linea)) {
+        AnalizadorLexico analizador(linea);
+        Token token;
 
-    do {
-        token = analizador.obtenerSiguienteToken();
-        imprimirToken(token);
-    } while (token.tipo != FIN_DE_ARCHIVO);
+        do {
+            token = analizador.obtenerSiguienteToken();
+            if (token.tipo != FIN_DE_LINEA) imprimirToken(token);            
+        } while (token.tipo != FIN_DE_LINEA);
+    }
+    Token Final;
+    Final.tipo = FIN_DE_ARCHIVO;
+    imprimirToken(Final);
 
-    
+    archivo.close();
 
     return 0;
 }
