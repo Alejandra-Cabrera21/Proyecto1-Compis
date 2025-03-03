@@ -1,0 +1,7 @@
+int x;
+Read(x);
+if (x > 80) {
+    Print("Mayor que 18");
+} else {
+    Print("Menor o igual a 18");
+}
