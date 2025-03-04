@@ -1,5 +1,5 @@
 int x;
-Read(x);
+read(x);
 bool var = x > 80;
 if (var) {
     Print("Mayor que 18");
