@@ -6,7 +6,7 @@ Números flotantes	[0-9]+(\.[0-9]+)?
 Cadenas de texto	\".*?\"
 Operadores aritméticos	[\+\-\*/]
 Operadores relacionales	[==, !=, >, <]
-Palabras clave	[int, float, if, else, while, return, read, write]
+Palabras clave	[int, float, string, bool, if, else, while, return, read, write, print]
 Símbolos especiales	[\{\}\(\);=]
 
 
