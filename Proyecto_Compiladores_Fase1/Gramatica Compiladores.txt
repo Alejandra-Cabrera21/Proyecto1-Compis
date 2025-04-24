@@ -10,8 +10,6 @@ Palabras clave	[int, float, string, bool, if, else, while, return, read, write, 
 Símbolos especiales	[\{\}\(\);=]
 
 
-
-
 <programa> ::= <lista-declaraciones> <lista_funciones> <lista-sentencias>
 
 <lista-declaraciones> ::= <declaracion> <lista-declaraciones> | ε
@@ -22,15 +20,17 @@ Símbolos especiales	[\{\}\(\);=]
 	| "string" <identificador> "=" <string> ";"
 	| "bool" <identificador> "=" <booleano> ";"
 
-<expresion> ::=     <numero> 
-		|   <expresion> <operador_aritmetico> <expresion> 
-		|   <identificador>
-		|   "(" <expresion_int> ")"
+<expresion> ::= <expresion_suma>
+
+<expresion_suma> ::= <expresion_multiplicacion> ( ("+" | "-") <expresion_multiplicacion> )*
+
+<expresion_multiplicacion> ::= <expresion_parentesis> ( ("*" | "/") <expresion_parentesis> )*
+
+<expresion_parentesis> ::= "(" <expresion> ")" | <numero> | <identificador>
 
 <booleano> ::= "True" | "False" | <identificador> <operador_relacional> <identificador> | <numero> <operador_relacional> <numero>
 
 <identificador> ::= [a-zA-Z_][a-zA-Z0-9_]*
-
 
 <lista_funciones> ::= <funcion> <lista_funciones> | ε
 
@@ -42,21 +42,18 @@ Símbolos especiales	[\{\}\(\);=]
 
 <bloque> ::= "{" <lista-sentencias> "}"
 
-
-
 <lista-sentencias> ::= <sentencia> <lista-sentencias> | ε
 
 <sentencia> ::= <asignacion>
               | <estructura-control>
               | <entrada-salida>
               | <llamada-funcion>
-	      
 
 <asignacion> ::= <identificador> "=" <expresion> ";" 
-		|<identificaror> "=" <string> ";"
+		|<identificador> "=" <string> ";"
 		|<identificador> "=" <booleano> ";"
 
-<estructura-control> ::= "if" "(" <identificador> ")" <bloque> <else-opcional>
+<estructura-control> ::= "if" "(" <booleano> ")" <bloque> <else-opcional>
                        | "while" "(" <booleano> ")" <bloque>
 
 <else-opcional> ::= "else" <bloque> | ε
@@ -65,26 +62,12 @@ Símbolos especiales	[\{\}\(\);=]
                    | "write" "(" <contenido> , <string> ")" ";" // Contenido, Ruta
 		   | "Print" "(" <contenido> ")" ";"
 
-<contenido> ::= <string> || <identificador>
+<contenido> ::= <string> | <identificador>
 
 <string> ::= Cadena de texto
 <operador-aritmetico> ::= "+" | "-" | "*" | "/"
 <operador-relacional> ::= "==" | "!=" | ">" | "<"
 
-
-
-
-
-
-
-
-
 <llamada-funcion> ::= <identificador> "(" <argumentos> ")" ";"
 <argumentos> ::= <expresion> <mas-argumentos> | ε
 <mas-argumentos> ::= "," <expresion> <mas-argumentos> | ε
-
-
-
-
-
-
