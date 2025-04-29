@@ -1,7 +1,0 @@
-def suma(int a, int b) {
-  res = a + b;
-  Print(res);
-}
-c = 5;
-d = 10;
-suma(c,d);
