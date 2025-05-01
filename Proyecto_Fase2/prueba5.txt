@@ -1,4 +1,0 @@
-int contador = 0;
-while(True) {
-  Print("Ciclo");
-}
